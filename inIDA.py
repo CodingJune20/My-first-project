@@ -129,39 +129,39 @@ class Normalization():
         for i,c in enumerate(final):        
             self.corpus_data[func_add_list[i]] = c[1]
 
-
-#start and end point of 'text'
-for seg in idautils.Segments():
-    if(idc.get_segm_name(seg) == '.text'):
-        text_start_ea = idc.get_segm_start(seg)
-        text_end_ea = idc.get_segm_end(seg)
-
-
-
-# Read byte codes in each function
-func_dict = {}
-func_name_list = []
-func_add_list = []
-func_asm_list = []
-for func in idautils.Functions():
-    func_start_ea = idc.get_func_attr(func,FUNCATTR_START)
-    func_end_ea = idc.get_func_attr(func, FUNCATTR_END) 
-    func_name = idc.get_func_name(func)
-    if func_start_ea >= text_start_ea and func_end_ea <= text_end_ea and 'sub_' in func_name:
-        func_add_list.append(func_start_ea)
-        asmcode = b''
-        cur_addr = func_start_ea
-        while cur_addr <= func_end_ea:
-            asmcode += idc.get_bytes(cur_addr,idc.get_item_size(cur_addr))
-            cur_addr = idc.next_head(cur_addr,func_end_ea)
-        func_asm_list.append(asmcode)
-        func_dict[func_start_ea] = asmcode
-        func_name_list.append(func_name)
-
-
-
 if __name__ == "__main__":
-   
+
+    #start and end point of 'text'
+    for seg in idautils.Segments():
+        if(idc.get_segm_name(seg) == '.text'):
+            text_start_ea = idc.get_segm_start(seg)
+            text_end_ea = idc.get_segm_end(seg)
+
+
+
+    # Read byte codes in each function
+    func_dict = {}
+    func_name_list = []
+    func_add_list = []
+    func_asm_list = []
+    for func in idautils.Functions():
+        func_start_ea = idc.get_func_attr(func,FUNCATTR_START)
+        func_end_ea = idc.get_func_attr(func, FUNCATTR_END) 
+        func_name = idc.get_func_name(func)
+        if func_start_ea >= text_start_ea and func_end_ea <= text_end_ea and 'sub_' in func_name:
+            func_add_list.append(func_start_ea)
+            asmcode = b''
+            cur_addr = func_start_ea
+            while cur_addr <= func_end_ea:
+                asmcode += idc.get_bytes(cur_addr,idc.get_item_size(cur_addr))
+                cur_addr = idc.next_head(cur_addr,func_end_ea)
+            func_asm_list.append(asmcode)
+            func_dict[func_start_ea] = asmcode
+            func_name_list.append(func_name)
+
+
+
+    
     ida_path = idaapi.get_user_idadir() + "\\plugins\\AsmDepictor"
     os.chdir(ida_path)
 
@@ -180,8 +180,6 @@ if __name__ == "__main__":
     command = "subword-nmt apply-bpe --codes ./pretrained_voca.voc --input ./source.txt --output ./source_bpe.txt"
     res = subprocess.call(command)
 
-
-
     with open("./source_bpe.txt", mode= 'r') as out:
         lines = out. readlines()
         for i,line in enumerate(lines):
@@ -196,9 +194,6 @@ if __name__ == "__main__":
             idaapi.force_name(func_add_list[i],"Unknown",SN_NOCHECK)
             continue
         idaapi.force_name(func_add_list[i], response, SN_NOCHECK)
-
-    
-
 
     # Remove files
     if os.getcwd() == ida_path:
