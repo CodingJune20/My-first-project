@@ -8,8 +8,13 @@ import subprocess
 
 
 #To import capstone, append python path
-conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
-sys.path.append(conda_path)
+try:
+    conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
+    #conda_path = "C:\\Program Files\\Python38\\Lib\\site-packages"
+    sys.path.append(conda_path)
+
+except:
+    print("Open Failed...")
 
 from capstone import *
 import requests
@@ -191,9 +196,10 @@ if __name__ == "__main__":
         code_ex = func_asm_list[i]
         response = requests.post("http://115.145.172.80:30303/predictions/AsmDepictor", json={'code': code_ex}).text
         if response.startswith("{"):
-            idaapi.force_name(func_add_list[i],"Unknown",SN_NOCHECK)
+            idaapi.force_name(func_add_list[i],"_________",SN_NOCHECK)
+           
             continue
-        idaapi.force_name(func_add_list[i], response, SN_NOCHECK)
+        idaapi.force_name(func_add_list[i], "@@"+response, SN_NOCHECK)
 
     # Remove files
     if os.getcwd() == ida_path:
