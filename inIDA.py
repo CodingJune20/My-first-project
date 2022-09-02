@@ -8,17 +8,29 @@ import subprocess
 
 
 #To import capstone, append python path
+conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
+pip_path = []
+pip_path.append(conda_path)
+pip_path.append("C:\\Program Files\\Python38\\Lib\\site-packages")
+for pip in pip_path:
+    sys.path.append(pip)
+
 try:
-    conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
-    #conda_path = "C:\\Program Files\\Python38\\Lib\\site-packages"
-    sys.path.append(conda_path)
+    from capstone import *
+    import requests
 
-except:
-    print("Open Failed...")
-
-from capstone import *
-import requests
-
+except ModuleNotFoundError:
+    print("""
+            There is no path, Then Follow the guide
+            1. find the pip install path
+                (In your intepreter 
+                    import sys
+                    sys.executable
+                )
+            2. Add to the pip_path 
+            
+        """)
+    
 
 class Normalization():
     
