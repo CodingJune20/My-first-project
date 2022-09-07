@@ -12,6 +12,13 @@ conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
 pip_path = []
 pip_path.append(conda_path)
 pip_path.append("C:\\Program Files\\Python38\\Lib\\site-packages")
+
+# If you have module import Error, Please add path of python you used when install pip 
+
+your_path = ""  #ex "C:\\Users\\admin ..." or r"C:\Users\admin..."
+pip_path.append(your_path)
+
+
 for pip in pip_path:
     sys.path.append(pip)
 
