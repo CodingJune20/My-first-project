@@ -5,12 +5,12 @@ import idautils
 import os
 import sys
 import subprocess
-
+from tqdm import *
 
 #To import capstone, append python path
-#conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
+conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
 pip_path = []
-#pip_path.append(conda_path)
+pip_path.append(conda_path)
 pip_path.append("C:\\Program Files\\Python38\\Lib\\site-packages")
 
 # If you have module import Error, Please add path of python you used when install pip 
@@ -216,29 +216,28 @@ if __name__ == "__main__":
             line = line.strip()
             func_asm_list[i] = line
 
+
+    fail_cnt = 0
+    success_cnt = 0
     # Change function name
-    for i in range(len(func_add_list)):
+    print("\nDeducing function name...")
+    for i in tqdm(range(len(func_add_list))):
         code_ex = func_asm_list[i]
         response = requests.post("http://115.145.172.80:30303/predictions/AsmDepictor", json={'code': code_ex}).text
         if response.startswith("{"):
             idaapi.force_name(func_add_list[i],"_________",SN_NOCHECK)
-           
+            fail_cnt += 1
             continue
         idaapi.force_name(func_add_list[i], "@@"+response, SN_NOCHECK)
-
+        success_cnt += 1
     # Remove files
+    print("\nRemoving additional file...")
     if os.getcwd() == ida_path:
-        for file in os.listdir():
+        for file in tqdm(os.listdir()):
             if file == "inIDA.py" or file == "pretrained_voca.voc":
                 continue
             os.remove(file)
 
-    '''
-    with open("./predicted_out/prediction.txt", mode = 'r') as out:
-        lines = out.readlines()
-        for i,line in enumerate(lines):
-            line = line.strip()
-            #if Text(Ground Truth) == func_add_list[i]:
-            idaapi.force_name(func_add_list[i],line,SN_NOCHECK)
-    '''
+    print(f"[+] {success_cnt} function success to deduce name")
+    print(f"[-] {fail_cnt} function failed to deduce name")
 
