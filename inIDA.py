@@ -8,9 +8,9 @@ import subprocess
 
 
 #To import capstone, append python path
-conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
+#conda_path = os.path.expanduser('~') + "\\anaconda3\\lib\\site-packages"
 pip_path = []
-pip_path.append(conda_path)
+#pip_path.append(conda_path)
 pip_path.append("C:\\Program Files\\Python38\\Lib\\site-packages")
 
 # If you have module import Error, Please add path of python you used when install pip 
@@ -27,16 +27,22 @@ try:
     import requests
 
 except ModuleNotFoundError:
+   
     print("""
-            There is no path, Then Follow the guide
+        There is no path, Then Follow the guide
             1. find the pip install path
-                (In your intepreter 
-                    import sys
-                    sys.executable
-                )
-            2. Add to the pip_path 
+                At you install requirements (opne the python with it)
+                $ import site
+                $ site.getsitepackages()
+
+                then find path end with 'side-packages'
             
-        """)
+            2. Add path to the 'your_path'
+    """)
+    
+    raise Exception("There aren't pip path is added!")
+
+    exit()
     
 
 class Normalization():
